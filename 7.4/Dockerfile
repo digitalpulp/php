@@ -1,11 +1,13 @@
-FROM php:7.1-fpm-alpine
+FROM php:7.4-fpm-alpine
 MAINTAINER digitalpulp
 
 VOLUME /var/www
 WORKDIR /var/www
 
 RUN apk add --no-cache --virtual .dd-build-deps libpng-dev libjpeg-turbo-dev postgresql-dev libxml2-dev $PHPIZE_DEPS \
-   && apk add --no-cache --update libmemcached-libs zlib \
+   && apk add --no-cache --update libmemcached-libs zlib libzip-dev \
+   && apk add --no-cache libpng libjpeg libpq libxml2 libmemcached freetype-dev oniguruma-dev \
+   && apk add imagemagick \
    && set -xe \
    && cd /tmp/ \
    && apk add --no-cache --update --virtual .phpize-deps $PHPIZE_DEPS \
@@ -21,15 +23,13 @@ RUN apk add --no-cache --virtual .dd-build-deps libpng-dev libjpeg-turbo-dev pos
         cd /tmp/ \
     )  \
    && docker-php-ext-enable igbinary memcached \
-   && rm -rf /tmp/* \
-   && docker-php-ext-configure gd --with-png-dir=/usr --with-jpeg-dir=/usr \
-   && docker-php-ext-install gd mbstring pdo pdo_mysql mysqli pdo_pgsql zip \
-   && docker-php-ext-install opcache bcmath soap \
    && pecl install redis \
    && pecl install xdebug \
    && docker-php-ext-enable redis xdebug \
-   && apk add --no-cache libpng libjpeg libpq libxml2 libmemcached \
-   && apk add imagemagick \
+   && docker-php-ext-configure gd --with-freetype --with-jpeg \
+   && docker-php-ext-install gd mbstring pdo pdo_mysql mysqli pdo_pgsql zip \
+   && docker-php-ext-install opcache bcmath soap \
+   && rm -rf /tmp/* \
    && apk del .dd-build-deps .memcached-deps .phpize-deps\
    && update-ca-certificates
 
