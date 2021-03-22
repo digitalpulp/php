@@ -1,4 +1,5 @@
-FROM php:7.4-fpm-alpine
+FROM php:7.4.16-fpm-alpine
+
 MAINTAINER digitalpulp
 
 VOLUME /var/www
@@ -28,7 +29,7 @@ RUN apk add --no-cache --virtual .dd-build-deps libpng-dev libjpeg-turbo-dev pos
    && docker-php-ext-enable redis xdebug \
    && docker-php-ext-configure gd --with-freetype --with-jpeg \
    && docker-php-ext-install gd mbstring pdo pdo_mysql mysqli pdo_pgsql zip \
-   && docker-php-ext-install opcache bcmath soap \
+   && docker-php-ext-install opcache bcmath soap intl\
    && rm -rf /tmp/* \
    && apk del .dd-build-deps .memcached-deps .phpize-deps\
    && update-ca-certificates

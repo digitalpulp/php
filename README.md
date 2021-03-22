@@ -7,4 +7,4 @@ Tags and releases listed on [Docker Hub](https://hub.docker.com/r/digitalpulp/ph
 Tags for these containers have been simplifed to just the php version. The most recent are:
 
 - 7.3.24
-- 7.4.12
+- 7.4.16
