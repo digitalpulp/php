@@ -1,4 +1,5 @@
-FROM php:7.3-fpm-alpine
+FROM php:7.3.27-fpm-alpine
+
 MAINTAINER digitalpulp
 
 VOLUME /var/www
@@ -11,7 +12,7 @@ RUN apk add --no-cache --virtual .dd-build-deps libpng-dev libjpeg-turbo-dev pos
    && set -xe \
    && cd /tmp/ \
    && apk add --no-cache --update --virtual .phpize-deps $PHPIZE_DEPS \
-   && apk add --no-cache --update --virtual .memcached-deps zlib-dev libmemcached-dev cyrus-sasl-dev \
+   && apk add --no-cache --update --virtual .memcached-deps zlib-dev libmemcached-dev cyrus-sasl-dev icu-dev \
    && pecl install igbinary \
    && ( \
         pecl install --nobuild memcached && \
@@ -29,6 +30,7 @@ RUN apk add --no-cache --virtual .dd-build-deps libpng-dev libjpeg-turbo-dev pos
    && docker-php-ext-configure gd --with-freetype-dir=/usr --with-png-dir=/usr --with-jpeg-dir=/usr \
    && docker-php-ext-install gd mbstring pdo pdo_mysql mysqli pdo_pgsql zip \
    && docker-php-ext-install opcache bcmath soap \
+   && docker-php-ext-configure intl && docker-php-ext-install intl \
    && rm -rf /tmp/* \
    && apk del .dd-build-deps .memcached-deps .phpize-deps\
    && update-ca-certificates
